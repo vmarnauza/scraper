@@ -20,6 +20,7 @@ schedule.scheduleJob('*/5 * * * *', function () {
       const client = await page.target().createCDPSession()
       await client.send('Network.clearBrowserCookies')
       await client.send('Network.clearBrowserCache')
+      // TODO insert link in the next line between parentheses
       await page.goto('',
         { waitUntil: 'networkidle2' })
 
