@@ -14,4 +14,4 @@ Simple web scraper example. Script will run every 5 minutes and will save result
 * `npm-install`
 
 ## Launch
-* `npm run dev` or `yarn dev` or `node index.js`
+* `npm run dev` or `node index.js`
