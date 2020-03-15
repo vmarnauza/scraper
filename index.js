@@ -20,7 +20,7 @@ schedule.scheduleJob('*/5 * * * *', function () {
       const client = await page.target().createCDPSession()
       await client.send('Network.clearBrowserCookies')
       await client.send('Network.clearBrowserCache')
-      await page.goto('https://m.ss.lv/lv/transport/cars/',
+      await page.goto('',
         { waitUntil: 'networkidle2' })
 
       await page.waitForSelector('#hmimg')
