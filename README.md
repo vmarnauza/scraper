@@ -1,13 +1,11 @@
 # scraper
-Simple web scraper example. Script will run every 5 minutes and will save results in a json file in the same directory.
+Simple web scraper example.
 
 **This project is intended for educational purposes.**
 
 ## Technologies 
 * Node.js
 * Puppeteer
-* Node File System
-* Node Schedule
 
 ## Installation
 * Clone or download repository
