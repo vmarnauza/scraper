@@ -1,46 +1,43 @@
-const puppeteer = require('puppeteer');
+const puppeteer = require("puppeteer");
 
-(async function main () {
-  try {
-    const browser = await puppeteer.launch({
-      // headless: false,
-      ignoreHTTPSErrors: true,
-    })
-    const page = await browser.newPage()
-    await page.goto('https://www.ss.lv/lv/transport/cars/volvo/filter/',
-      { waitUntil: 'networkidle2' })
-    await page.evaluate(async () => {
-      let filterData = new FormData()
-      let items = {
-        'topt[8][min]': 5000,
-        'topt[8][max]': 6500,
-        'topt[18][min]': '',
-        'topt[18][max]': '',
-        'topt[15][min]': '',
-        'topt[15][max]': '',
-        'opt[34]': '',
-        'opt[35]': '',
-        'opt[32]': '',
-        'opt[17]': '',
-        'sid': '/lv/transport/cars/volvo/',
-      }
-      for (let key in items) {
-        filterData.append(key, items[key])
-      }
-      return Promise.resolve(fetch(
-        'https://www.ss.lv/lv/transport/cars/volvo/filter/',
-        {
-          method: 'POST',
-          body: filterData,
-        }).
-        then(response => response.text()).
-        then(text => document.body.innerHTML = text)).catch((error) => {
-        console.error('Error:', error)
-      })
-    })
+(async function main() {
+    try {
+        const browser = await puppeteer.launch({
+            // headless: false,
+        });
 
-    browser.close()
-  } catch (err) {
-    console.error(err)
-  }
-})()
+        const page = await browser.newPage();
+
+        // set fake user agent data to make it work in headless mode
+        // otherwise the page will think you're a bot
+        await page.setUserAgent(
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"
+        );
+
+        await page.goto("https://www.ss.lv/lv/transport/cars/volvo/filter/");
+
+        // enter filter params for price
+        await page.type("#f_o_8_min", "5000");
+        await page.type("#f_o_8_max", "6500");
+
+        // submit filter form
+        const form = await page.$("#filter_frm");
+        await form.evaluate((form) => form.submit());
+
+        // wait for results
+        await page.waitForNavigation();
+
+        // read the text of all results on this page
+        const resultNameEls = await page.$$(".msg2");
+        const resultNames = await Promise.all(
+            resultNameEls.map((el) => page.evaluate((el) => el.textContent, el))
+        );
+
+        // log top 5 results
+        console.log(resultNames.splice(0, 5));
+
+        browser.close();
+    } catch (err) {
+        console.error(err);
+    }
+})();
